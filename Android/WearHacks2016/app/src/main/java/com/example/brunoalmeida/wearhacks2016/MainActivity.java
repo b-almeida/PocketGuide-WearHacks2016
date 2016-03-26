@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.app.Application;
+import android.widget.TextView;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.EstimoteSDK;
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // Optional, debug logging.
         EstimoteSDK.enableDebugLogging(true);
 
-        MyApplication Beacon=new MyApplication();
+        onCreateBeacons();
         setContentView(R.layout.activity_main);
 
         mVisible = true;
@@ -349,4 +350,70 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         mCameraView.activityOnConfigurationChanged();
     }
+
+
+
+
+
+
+    private BeaconManager beaconManager;
+
+    private void onCreateBeacons() {
+        beaconManager = new BeaconManager(getApplicationContext());
+
+        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+            @Override
+            public void onEnteredRegion(Region region, List<Beacon> list) {
+                Log.i("MyApplication", "onEnteredRegion()");
+                if (list.size() > 0) {
+                    Beacon b = list.get(0);
+                    Log.v(TAG, region.toString());
+                    Log.v(TAG, list.toString());
+                }
+
+                showText(region.getIdentifier());
+            }
+            @Override
+            public void onExitedRegion(Region region) {
+                Log.i("MyApplication", "onExitedRegion()");
+                // could add an "exit" notification too if you want (-:
+            }
+        });
+
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                Log.i("MyApplication", "onServiceReady()");
+                beaconManager.startMonitoring(new Region("beacon 1",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        59932, 55122));
+            }
+        });
+    }
+
+    public void showNotification(String title, String message) {
+        Log.i("MyApplication", "showNotification()");
+
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
+                new Intent[] { notifyIntent }, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
+    public void showText(String text) {
+        TextView text_view = (TextView) findViewById(R.id.text_view);
+        text_view.setText(text);
+    }
+
 }
