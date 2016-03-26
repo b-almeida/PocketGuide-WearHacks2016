@@ -365,13 +365,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
                 Log.i("MyApplication", "onEnteredRegion()");
-                if (list.size() > 0) {
-                    Beacon b = list.get(0);
-                    Log.v(TAG, region.toString());
-                    Log.v(TAG, list.toString());
+                Log.v(TAG, region.toString());
+                Log.v(TAG, list.toString());
+
+                String displayString = "";
+                for (Beacon beacon : list) {
+                    displayString += ((double)beacon.getMeasuredPower() / beacon.getRssi()) + "m\n";
+                }
+                if (displayString.endsWith("\n")) {
+                    displayString = displayString.substring(0, displayString.lastIndexOf('\n'));
                 }
 
-                showText(region.getIdentifier());
+                showText(region.getIdentifier() + "\n" + displayString);
             }
             @Override
             public void onExitedRegion(Region region) {
