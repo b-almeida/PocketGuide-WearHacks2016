@@ -14,12 +14,13 @@
     </FrameLayout>
 
     <TextView
+        android:visibility="invisible"
         android:id="@+id/debug_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="Hello World!"
+        android:text="Welcome!"
         android:textColor="@android:color/white"
         android:layout_gravity="left|top"
         android:textSize="24sp"
@@ -36,47 +37,75 @@
         android:textSize="48sp"
         android:fontFamily="Arial" />
 
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/down_icon"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:src="@drawable/ic_arrow_downward_white_48dp"
-        android:minWidth="@dimen/arrow_dimen"
-        android:minHeight="@dimen/arrow_dimen"/>
+        android:layout_gravity="center_horizontal|bottom">
+
+        <ImageView
+            android:visibility="visible"
+            android:id="@+id/up_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_arrow_upward_white_48dp"
+            android:minWidth="@dimen/arrow_dimen"
+            android:minHeight="@dimen/arrow_dimen"
+            android:maxWidth="@dimen/arrow_dimen"
+            android:maxHeight="@dimen/arrow_dimen"/>
 
 
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/up_icon"
+        <ImageView
+            android:visibility="visible"
+            android:id="@+id/left_icon"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_left_white_48dp"
+            android:minWidth="@dimen/arrow_dimen"
+            android:minHeight="@dimen/arrow_dimen"
+            android:maxWidth="@dimen/arrow_dimen"
+            android:maxHeight="@dimen/arrow_dimen"/>
+
+        <ImageView
+            android:visibility="visible"
+            android:id="@+id/right_icon"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/left_icon"
+            android:src="@drawable/ic_chevron_right_white_48dp"
+            android:minWidth="@dimen/arrow_dimen"
+            android:minHeight="@dimen/arrow_dimen"
+            android:maxWidth="@dimen/arrow_dimen"
+            android:maxHeight="@dimen/arrow_dimen"/>
+
+        <ImageView
+            android:visibility="visible"
+            android:id="@+id/down_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/up_icon"
+            android:layout_gravity="center_horizontal|bottom"
+            android:src="@drawable/ic_arrow_downward_white_48dp"
+            android:minWidth="@dimen/arrow_dimen"
+            android:minHeight="@dimen/arrow_dimen"
+            android:maxWidth="@dimen/arrow_dimen"
+            android:maxHeight="@dimen/arrow_dimen"/>
+
+    </RelativeLayout>
+
+
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:src="@drawable/ic_arrow_upward_white_48dp"
-        android:minWidth="@dimen/arrow_dimen"
-        android:minHeight="@dimen/arrow_dimen"/>
-
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/right_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:src="@drawable/ic_chevron_right_white_48dp"
-        android:minWidth="@dimen/arrow_dimen"
-        android:minHeight="@dimen/arrow_dimen"/>
-
-    <ImageView
-        android:visibility="invisible"
-        android:id="@+id/left_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:src="@drawable/ic_chevron_left_white_48dp"
-        android:minWidth="@dimen/arrow_dimen"
-        android:minHeight="@dimen/arrow_dimen"/>
-
+        android:layout_gravity="right|bottom"
+        android:text="Developed For Sick Kids "
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:fontFamily="Arial"/>
 
 
     <!-- The primary full-screen view. This can be replaced with whatever view

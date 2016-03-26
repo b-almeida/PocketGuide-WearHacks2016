@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="arrow_dimen"> 144dp  </dimen>
+    <dimen name="arrow_dimen">96dp</dimen>
 
 </resources>

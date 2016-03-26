@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.app.Application;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estimote.sdk.Beacon;
@@ -156,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         EstimoteSDK.enableDebugLogging(true);
 
         onCreateBeacons();
+        onCreateRooms();
+
         setContentView(R.layout.activity_main);
 
         mVisible = true;
@@ -496,12 +499,22 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         notificationManager.notify(1, notification);
     }*/
 
+    private enum Direction {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
+
     private class Room {
+        int id;
         int major;
         int minor;
         String name;
+        HashMap<Integer, Direction> nearbyRooms = new HashMap<>();
 
-        Room(int major, int minor, String name) {
+        Room(int id, int major, int minor, String name) {
+            this.id = id;
             this.major = major;
             this.minor = minor;
             this.name = name;
@@ -509,13 +522,28 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     private Room[] rooms = {
-            new Room(23105, 37595, "Emergency Room"),
-            new Room(22948, 14701, "Surgery Room"),
-            new Room(33491, 34365, "X-Ray"),
-            new Room(9652, 37519, "Maternity"),
-            new Room(59932, 55122, "Intensive Care"),
-            new Room(24028, 20615, "Recovery")
+            new Room(0, 23105, 37595, "Emergency Room"),
+            new Room(1, 22948, 14701, "Surgery Room"),
+            new Room(2, 33491, 34365, "X-Ray"),
+            new Room(3, 9652, 37519, "Maternity"),
+            new Room(4, 59932, 55122, "Intensive Care"),
+            new Room(5, 24028, 20615, "Recovery")
     };
+
+    private void onCreateRooms() {
+        rooms[0].nearbyRooms.put(1, Direction.UP);
+        rooms[1].nearbyRooms.put(0,Direction.DOWN);
+        rooms[0].nearbyRooms.put(4,Direction.RIGHT);
+        rooms[4].nearbyRooms.put(0,Direction.LEFT);
+        rooms[1].nearbyRooms.put(5,Direction.RIGHT);
+        rooms[5].nearbyRooms.put(1,Direction.LEFT);
+        rooms[2].nearbyRooms.put(0,Direction.UP);
+        rooms[0].nearbyRooms.put(2,Direction.DOWN);
+        rooms[3].nearbyRooms.put(5,Direction.DOWN);
+        rooms[5].nearbyRooms.put(3,Direction.UP);
+        rooms[4].nearbyRooms.put(5,Direction.UP);
+        rooms[5].nearbyRooms.put(4,Direction.DOWN);
+    }
 
     public void updateView() {
         String displayString = "";
@@ -551,7 +579,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         TextView debug_view = (TextView) findViewById(R.id.debug_view);
         debug_view.setText(displayString);
 
+        ImageView left_arrow=(ImageView)findViewById(R.id.left_icon);
+        ImageView right_arrow=(ImageView)findViewById(R.id.right_icon);
+        ImageView up_arrow=(ImageView)findViewById(R.id.up_icon);
+        ImageView down_arrow=(ImageView)findViewById(R.id.down_icon);
 
+/*        left_arrow.setVisibility(View.INVISIBLE);
+        right_arrow.setVisibility(View.INVISIBLE);
+        up_arrow.setVisibility(View.INVISIBLE);
+        down_arrow.setVisibility(View.INVISIBLE);*/
 
 
         boolean isRoomKnown = false;
@@ -564,6 +600,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 if (beacon.getMajor() == room.major && beacon.getMinor() == room.minor) {
                     isRoomKnown = true;
                     room_name.setText(room.name);
+
+                    for (int roomID : room.nearbyRooms.keySet()) {
+                        switch (room.nearbyRooms.get(roomID)) {
+                            case LEFT:
+                                left_arrow.setVisibility(View.VISIBLE);
+                                break;
+                            case RIGHT:
+                                right_arrow.setVisibility(View.VISIBLE);
+                                break;
+                            case UP:
+                                up_arrow.setVisibility(View.VISIBLE);
+                                break;
+                            case DOWN:
+                                down_arrow.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
                 }
             }
 
