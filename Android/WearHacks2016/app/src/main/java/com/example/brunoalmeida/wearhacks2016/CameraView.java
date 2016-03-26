@@ -13,25 +13,54 @@ import java.io.IOException;
 /**
  * Created by Bruno on 2016-03-25.
  */
-public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
+public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
+
+    private static final String TAG = "CameraView";
+
+    private Activity mActivity;
+
     private SurfaceHolder mHolder;
     private Camera mCamera;
 
-    public CameraView(Context context, Camera camera){
-        super(context);
+    public CameraView(Activity activity) {
+        super(activity);
 
-        mCamera = camera;
+        mActivity = activity;
 
 
+
+
+        setCamera();
+
+
+
+
+
+
+
+
+        //get the holder and set this class as the callback, so we can get camera data here
+        mHolder = getHolder();
+        mHolder.addCallback(this);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
+    }
+
+    private void setCamera() {
+        try{
+            Log.v(TAG, "number of cameras: " + Camera.getNumberOfCameras());
+            mCamera = Camera.open();//you can use open(int) to use different cameras
+        } catch (Exception e){
+            Log.d("ERROR", "Failed to get camera: " + e.getMessage());
+        }
 
 
         //mCamera.setDisplayOrientation(90);
 
 
         Camera.CameraInfo info =
-                     new android.hardware.Camera.CameraInfo();
+                new android.hardware.Camera.CameraInfo();
         Camera.getCameraInfo(0, info);
-        int rotation = ((Activity) context).getWindowManager().getDefaultDisplay()
+        int rotation = mActivity.getWindowManager().getDefaultDisplay()
                 .getRotation();
         int degrees = 0;
         switch (rotation) {
@@ -48,20 +77,12 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
         } else {  // back-facing
             result = (info.orientation - degrees + 360) % 360;
         }
-        camera.setDisplayOrientation(result);
-
-
-
-
-        //get the holder and set this class as the callback, so we can get camera data here
-        mHolder = getHolder();
-        mHolder.addCallback(this);
-        mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
+        mCamera.setDisplayOrientation(result);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        try{
+        try {
             //when the surface is created, we can set the camera to draw images in this surfaceholder
             mCamera.setPreviewDisplay(surfaceHolder);
             mCamera.startPreview();
@@ -93,9 +114,20 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        Log.v(TAG, "In surfaceDestroyed()");
         //our app has only one screen, so we'll destroy the camera in the surface
         //if you are unsing with more screens, please move this code your activity
         mCamera.stopPreview();
         mCamera.release();
+    }
+
+    public void activityOnPause() {
+        Log.v(TAG, "In activityOnPause()");
+        //surfaceDestroyed(mHolder);
+    }
+
+    public void activityOnResume() {
+        Log.v(TAG, "In activityOnResume()");
+        setCamera();
     }
 }

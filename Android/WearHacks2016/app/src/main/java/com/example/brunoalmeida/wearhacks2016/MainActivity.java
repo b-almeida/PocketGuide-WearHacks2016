@@ -226,10 +226,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
         if(mCamera != null) {
-            mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
+            mCameraView = new CameraView(this);//create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mCameraView.activityOnPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCameraView.activityOnResume();
     }
 
     @Override
@@ -286,4 +299,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+
 }
