@@ -5,10 +5,24 @@
     android:background="#0099cc"
     tools:context="com.example.brunoalmeida.wearhacks2016.MainActivity">
 
+
+
+
+    <FrameLayout
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+
+
+
+
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
-    <TextView
+<!--    <TextView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,11 +31,11 @@
         android:text="@string/dummy_content"
         android:textColor="#33b5e5"
         android:textSize="50sp"
-        android:textStyle="bold" />
+        android:textStyle="bold" />-->
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
-    <FrameLayout
+<!--    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
@@ -45,6 +59,6 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
-    </FrameLayout>
+    </FrameLayout>-->
 
 </FrameLayout>
