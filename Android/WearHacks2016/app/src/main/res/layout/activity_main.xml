@@ -20,7 +20,8 @@
         android:text="Hello World!"
         android:textColor="@android:color/white"
         android:layout_gravity="center"
-        android:textSize="64sp" />
+        android:textSize="64sp"
+        android:fontFamily="Arial"/>
 
 
 
