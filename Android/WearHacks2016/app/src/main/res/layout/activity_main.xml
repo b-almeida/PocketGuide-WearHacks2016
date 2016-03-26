@@ -1,19 +1,32 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+
+    android:id="@+id/ui_layout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+
     android:background="#0099cc"
     tools:context="com.example.brunoalmeida.wearhacks2016.MainActivity">
 
 
-
-
-    <FrameLayout
-        android:id="@+id/camera_view"
+    <com.google.vrtoolkit.cardboard.CardboardView
+        android:id="@+id/cardboard_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true">
+<!--
+        <FrameLayout
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>-->
 
-    </FrameLayout>
+    </com.google.vrtoolkit.cardboard.CardboardView>
+
 
 
 
@@ -61,4 +74,4 @@
         </LinearLayout>
     </FrameLayout>-->
 
-</FrameLayout>
+</RelativeLayout>

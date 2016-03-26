@@ -27,16 +27,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
         mActivity = activity;
 
-
-
-
         setCamera();
-
-
-
-
-
-
 
 
         //get the holder and set this class as the callback, so we can get camera data here

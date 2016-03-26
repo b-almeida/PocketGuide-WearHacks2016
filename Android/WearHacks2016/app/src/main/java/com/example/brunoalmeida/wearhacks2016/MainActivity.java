@@ -2,13 +2,14 @@ package com.example.brunoalmeida.wearhacks2016;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.nfc.Tag;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+//import android.support.v7.app.ActionBar;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,12 +19,19 @@ import android.widget.FrameLayout;
 
 import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.SystemRequirementsChecker;
+import com.google.vrtoolkit.cardboard.CardboardActivity;
+import com.google.vrtoolkit.cardboard.CardboardView;
+import com.google.vrtoolkit.cardboard.Eye;
+import com.google.vrtoolkit.cardboard.HeadTransform;
+import com.google.vrtoolkit.cardboard.Viewport;
+
+import javax.microedition.khronos.egl.EGLConfig;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = "MainActivity";
 
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+            ActionBar actionBar = getActionBar();
             if (actionBar != null) {
                 actionBar.show();
             }
@@ -106,9 +114,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
 
-
-
-
     private Camera mCamera = null;
     private CameraView mCameraView = null;
 
@@ -116,8 +121,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     private static int PERMISSION_REQUEST_CODE_CAMERA = 1;
-
-
 
 
 
@@ -135,6 +138,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
         setContentView(R.layout.activity_main);
+
+        CardboardView cardboardView = (CardboardView) findViewById(R.id.cardboard_view);
+        cardboardView.setRestoreGLStateEnabled(false);
+        cardboardView.setRenderer(this);
+        setCardboardView(cardboardView);
 
         mVisible = true;
 /*        mControlsView = findViewById(R.id.fullscreen_content_controls);
@@ -236,9 +244,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
         if(mCamera != null) {
-            mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+/*            mCameraView = new CameraView(this);//create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
-            camera_view.addView(mCameraView);//add the SurfaceView to the layout
+            camera_view.addView(mCameraView);//add the SurfaceView to the layout*/
         }
     }
 
@@ -246,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onPause() {
         super.onPause();
 
-        mCameraView.activityOnPause();
+        //mCameraView.activityOnPause();
     }
 
     @Override
@@ -255,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
 
-        mCameraView.activityOnResume();
+        //mCameraView.activityOnResume();
     }
 
     @Override
@@ -278,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private void hide() {
         // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
@@ -313,5 +321,33 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    @Override
+    public void onNewFrame(HeadTransform headTransform) {
 
+    }
+
+    @Override
+    public void onDrawEye(Eye eye) {
+
+    }
+
+    @Override
+    public void onRendererShutdown() {
+
+    }
+
+    @Override
+    public void onSurfaceCreated(EGLConfig eglConfig) {
+
+    }
+
+    @Override
+    public void onFinishFrame(Viewport viewport) {
+
+    }
+
+    @Override
+    public void onSurfaceChanged(int i, int i1) {
+
+    }
 }
