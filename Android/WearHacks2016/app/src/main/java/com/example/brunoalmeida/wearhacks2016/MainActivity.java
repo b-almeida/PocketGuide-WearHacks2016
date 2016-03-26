@@ -16,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.estimote.sdk.SystemRequirementsChecker;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -242,6 +244,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onResume() {
         super.onResume();
+
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
+
         mCameraView.activityOnResume();
     }
 
