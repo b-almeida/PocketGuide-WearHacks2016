@@ -443,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         null, null));*/
 
 
-                beaconManager.startRanging(new Region("beacon 1",
+ /*               beaconManager.startRanging(new Region("beacon 1",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         59932, 55122));
                 beaconManager.startRanging(new Region("beacon 2",
@@ -454,7 +454,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         29098, 1493));
                 beaconManager.startRanging(new Region("beacon 4",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        14421, 31585));
+                        14421, 31585));*/
+
+                /*
+                onBeaconsDiscovered():
+                Region{identifier=General Beacon, proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=null, minor=null, secure=false}
+                [Beacon{macAddress=[F5:05:92:DB:5A:41], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=23105, minor=37595, measuredPower=-76, rssi=-87}, Beacon{macAddress=[FC:5C:39:6D:59:A4], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=22948, minor=14701, measuredPower=-60, rssi=-80}, Beacon{macAddress=[CD:7C:86:3D:82:D3], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=33491, minor=34365, measuredPower=-60, rssi=-84}, Beacon{macAddress=[DE:72:50:87:5D:DC], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=24028, minor=20615, measuredPower=-60, rssi=-89}]
+                */
 
                 beaconManager.startRanging(new Region("General Beacon",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
@@ -503,7 +509,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }*/
 
         for (Region region : rangedRegions.keySet()) {
-            displayString += "Ran: " + region.getIdentifier();
+            displayString += "Ran: " + region.getIdentifier() + "\n";
+
+            for (Beacon beacon : rangedRegions.get(region)) {
+                displayString += beacon.getMajor() + " " + beacon.getMinor() + "\n";
+            }
+
             displayString += "\n";
         }
 
