@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.estimote.sdk.EstimoteSDK;
 import com.estimote.sdk.SystemRequirementsChecker;
 
 /**
@@ -125,6 +126,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        //  App ID & App Token can be taken from App section of Estimote Cloud.
+        EstimoteSDK.initialize(this, getString(R.string.app_name), getString(R.string.app_name));
+        // Optional, debug logging.
+        EstimoteSDK.enableDebugLogging(true);
+
 
         setContentView(R.layout.activity_main);
 
