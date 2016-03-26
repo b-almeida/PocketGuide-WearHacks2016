@@ -23,7 +23,46 @@
         android:textSize="32sp"
         android:fontFamily="Arial"/>
 
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/down_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/ic_arrow_downward_white_48dp"
+        android:minWidth="@dimen/arrow_dimen"
+        android:minHeight="@dimen/arrow_dimen"/>
 
+
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/up_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/ic_arrow_upward_white_48dp"
+        android:minWidth="@dimen/arrow_dimen"
+        android:minHeight="@dimen/arrow_dimen"/>
+
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/right_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/ic_chevron_right_white_48dp"
+        android:minWidth="@dimen/arrow_dimen"
+        android:minHeight="@dimen/arrow_dimen"/>
+
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/left_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/ic_chevron_left_white_48dp"
+        android:minWidth="@dimen/arrow_dimen"
+        android:minHeight="@dimen/arrow_dimen"/>
 
 
 
