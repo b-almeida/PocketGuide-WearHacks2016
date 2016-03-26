@@ -366,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private BeaconManager beaconManager;
 
     private HashMap<Region, List<Beacon>> monitoredRegions = new HashMap<>();
+    private HashMap<Region, List<Beacon>> rangedRegions = new HashMap<>();
     private HashSet<Nearable> nearables = new HashSet<Nearable>();
 
     private void onCreateBeacons() {
@@ -382,11 +383,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 updateTextView();
             }
+
             @Override
             public void onExitedRegion(Region region) {
                 Log.i("MyApplication", "onExitedRegion()");
                 // could add an "exit" notification too if you want (-:
                 monitoredRegions.remove(region);
+
+                updateTextView();
+            }
+        });
+
+        beaconManager.setRangingListener(new BeaconManager.RangingListener() {
+            @Override
+            public void onBeaconsDiscovered(Region region, List<Beacon> list) {
+                Log.i(TAG, "onBeaconsDiscovered():\n" + region.toString() + "\n" + list.toString());
+
+                rangedRegions.put(region, list);
 
                 updateTextView();
             }
@@ -406,12 +419,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
+
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 Log.i("MyApplication", "onServiceReady()");
 
-                beaconManager.startMonitoring(new Region("beacon 1",
+/*                beaconManager.startMonitoring(new Region("beacon 1",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         59932, 55122));
                 beaconManager.startMonitoring(new Region("beacon 2",
@@ -426,6 +440,24 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 beaconManager.startMonitoring(new Region("General Beacon",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        null, null));*/
+
+
+                beaconManager.startRanging(new Region("beacon 1",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        59932, 55122));
+                beaconManager.startRanging(new Region("beacon 2",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        24565, 51630));
+                beaconManager.startRanging(new Region("beacon 3",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        29098, 1493));
+                beaconManager.startRanging(new Region("beacon 4",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+                        14421, 31585));
+
+                beaconManager.startRanging(new Region("General Beacon",
+                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         null, null));
 
                 //beaconManager.startNearableDiscovery();
@@ -433,9 +465,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
     }
 
-    public BeaconConnection getBeaconConnection(Beacon beacon) {
-        return new BeaconConnection(this, beacon.getMacAddress());
-    }
 
     public void showNotification(String title, String message) {
         Log.i("MyApplication", "showNotification()");
@@ -460,21 +489,28 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void updateTextView() {
         String displayString = "";
 
-        for (Region region : monitoredRegions.keySet()) {
-            displayString += region.getIdentifier() + " -";
+/*        for (Region region : monitoredRegions.keySet()) {
+            displayString += "Mon: " + region.getIdentifier() + " -";
 
             for (Beacon beacon : monitoredRegions.get(region)) {
-                displayString += String.format(" %.2f", Math.pow( 10, (beacon.getRssi() - beacon.getMeasuredPower()) / 10.0 ));
+                //displayString += String.format(" %.2f", Math.pow( 10, (beacon.getRssi() - beacon.getMeasuredPower()) / 10.0 ));
+                displayString += String.format(" %d", beacon.getMeasuredPower());
 
                 Log.v(TAG, beacon.toString());
             }
 
             displayString += "\n";
+        }*/
+
+        for (Region region : rangedRegions.keySet()) {
+            displayString += "Ran: " + region.getIdentifier();
+            displayString += "\n";
         }
 
         for (Nearable nearable : nearables) {
-            displayString += nearable.identifier + " - " + nearable.power + "\n";
+            displayString += "Nea: " + nearable.identifier + " - " + nearable.power + "\n";
         }
+
 
         if (displayString.endsWith("\n")) {
             displayString = displayString.substring(0, displayString.lastIndexOf('\n'));
