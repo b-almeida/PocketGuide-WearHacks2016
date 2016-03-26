@@ -366,7 +366,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private BeaconManager beaconManager;
 
     private HashMap<Region, List<Beacon>> monitoredRegions = new HashMap<>();
-    private HashMap<Region, List<Beacon>> rangedRegions = new HashMap<>();
+    //private HashMap<Region, List<Beacon>> rangedRegions = new HashMap<>();
+    private List<Beacon> rangedBeacons = null;
     private HashSet<Nearable> nearables = new HashSet<Nearable>();
 
     private void onCreateBeacons() {
@@ -399,7 +400,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 Log.i(TAG, "onBeaconsDiscovered():\n" + region.toString() + "\n" + list.toString());
 
-                rangedRegions.put(region, list);
+                //rangedRegions.put(region, list);
+                rangedBeacons = list;
 
                 updateTextView();
             }
@@ -508,19 +510,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             displayString += "\n";
         }*/
 
-        for (Region region : rangedRegions.keySet()) {
-            displayString += "Ran: " + region.getIdentifier() + "\n";
 
-            for (Beacon beacon : rangedRegions.get(region)) {
-                displayString += beacon.getMajor() + " " + beacon.getMinor() + "\n";
-            }
-
-            displayString += "\n";
+        displayString += "General Beacons\n";
+        for (Beacon beacon : rangedBeacons) {
+            displayString += beacon.getMajor() + " " + beacon.getMinor() + "\n";
         }
 
-        for (Nearable nearable : nearables) {
+/*        for (Nearable nearable : nearables) {
             displayString += "Nea: " + nearable.identifier + " - " + nearable.power + "\n";
-        }
+        }*/
 
 
         if (displayString.endsWith("\n")) {
