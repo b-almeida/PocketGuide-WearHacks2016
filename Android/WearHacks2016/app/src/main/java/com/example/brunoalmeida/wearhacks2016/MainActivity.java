@@ -2,6 +2,11 @@ package com.example.brunoalmeida.wearhacks2016;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
@@ -16,9 +21,16 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.app.Application;
 
+import com.estimote.sdk.Beacon;
 import com.estimote.sdk.EstimoteSDK;
+import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
+import com.estimote.sdk.BeaconManager;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -136,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         // Optional, debug logging.
         EstimoteSDK.enableDebugLogging(true);
 
-
+        MyApplication Beacon=new MyApplication();
         setContentView(R.layout.activity_main);
 
         mVisible = true;
