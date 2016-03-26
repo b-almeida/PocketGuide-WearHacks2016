@@ -3,6 +3,7 @@ package com.example.brunoalmeida.wearhacks2016;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.nfc.Tag;
 import android.support.v4.app.ActivityCompat;
@@ -125,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate()");
+
         super.onCreate(savedInstanceState);
 
 
@@ -137,6 +140,19 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         setContentView(R.layout.activity_main);
 
         mVisible = true;
+
+
+
+        View decorView = getWindow().getDecorView();
+        // Hide both the navigation bar and the status bar.
+        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+        // a general rule, you should design your app to hide the status bar whenever you
+        // hide the navigation bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+
+
 /*        mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);*/
 
@@ -313,5 +329,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.v(TAG, "onConfigurationChanged()");
 
+        super.onConfigurationChanged(newConfig);
+
+        mCameraView.activityOnConfigurationChanged();
+    }
 }

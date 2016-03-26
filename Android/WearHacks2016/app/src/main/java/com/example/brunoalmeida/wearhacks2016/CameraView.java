@@ -28,15 +28,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         mActivity = activity;
 
 
-
-
         setCamera();
-
-
-
-
-
-
 
 
         //get the holder and set this class as the callback, so we can get camera data here
@@ -69,6 +61,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             case Surface.ROTATION_180: degrees = 180; break;
             case Surface.ROTATION_270: degrees = 270; break;
         }
+        Log.v(TAG, "setCamera(): degrees = " + degrees);
 
         int result;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
@@ -93,6 +86,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i2, int i3) {
+        Log.v(TAG, "surfaceChanged()");
         //before changing the application orientation, you need to stop the preview, rotate and then start it again
         if(mHolder.getSurface() == null)//check if the surface is ready to receive camera data
             return;
@@ -102,6 +96,8 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         } catch (Exception e){
             //this will happen when you are trying the camera if it's not running
         }
+
+        setCamera();
 
         //now, recreate the camera preview
         try{
@@ -129,5 +125,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     public void activityOnResume() {
         Log.v(TAG, "In activityOnResume()");
         setCamera();
+    }
+
+    public void activityOnConfigurationChanged() {
+        Log.v(TAG, "activityOnConfigurationChanged()");
+        surfaceChanged(mHolder, 0, 0, 0);
     }
 }
