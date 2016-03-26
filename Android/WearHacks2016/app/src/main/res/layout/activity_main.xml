@@ -14,14 +14,27 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/text_view"
+        android:id="@+id/debug_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:text="Hello World!"
         android:textColor="@android:color/white"
-        android:layout_gravity="center_horizontal|top"
-        android:textSize="32sp"
+        android:layout_gravity="left|top"
+        android:textSize="24sp"
         android:fontFamily="Arial"/>
+
+    <TextView
+        android:id="@+id/room_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SickKids Hospital"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center|top"
+        android:textSize="48sp"
+        android:fontFamily="Arial" />
 
     <ImageView
         android:visibility="invisible"

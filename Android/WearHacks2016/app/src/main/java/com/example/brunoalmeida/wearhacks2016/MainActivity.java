@@ -35,6 +35,7 @@ import com.estimote.sdk.connection.BeaconConnection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -365,15 +366,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private BeaconManager beaconManager;
 
-    private HashMap<Region, List<Beacon>> monitoredRegions = new HashMap<>();
+    //private HashMap<Region, List<Beacon>> monitoredRegions = new HashMap<>();
     //private HashMap<Region, List<Beacon>> rangedRegions = new HashMap<>();
     private List<Beacon> rangedBeacons = null;
-    private HashSet<Nearable> nearables = new HashSet<Nearable>();
+    //private HashSet<Nearable> nearables = new HashSet<Nearable>();
+
 
     private void onCreateBeacons() {
         beaconManager = new BeaconManager(getApplicationContext());
 
-        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+/*        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
             @Override
             public void onEnteredRegion(Region region, List<Beacon> list) {
                 Log.i(TAG, "onEnteredRegion()");
@@ -393,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 updateTextView();
             }
-        });
+        });*/
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
@@ -403,11 +405,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 //rangedRegions.put(region, list);
                 rangedBeacons = list;
 
-                updateTextView();
+                updateView();
             }
         });
 
-        beaconManager.setNearableListener(new BeaconManager.NearableListener() {
+/*        beaconManager.setNearableListener(new BeaconManager.NearableListener() {
             @Override
             public void onNearablesDiscovered(List<Nearable> list) {
                 Log.i(TAG, "onNearablesDiscovered()");
@@ -419,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
                 updateTextView();
             }
-        });
+        });*/
 
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
@@ -474,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
-    public void showNotification(String title, String message) {
+/*    public void showNotification(String title, String message) {
         Log.i("MyApplication", "showNotification()");
 
         Intent notifyIntent = new Intent(this, MainActivity.class);
@@ -492,9 +494,30 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, notification);
+    }*/
+
+    private class Room {
+        int major;
+        int minor;
+        String name;
+
+        Room(int major, int minor, String name) {
+            this.major = major;
+            this.minor = minor;
+            this.name = name;
+        }
     }
 
-    public void updateTextView() {
+    private Room[] rooms = {
+            new Room(23105, 37595, "Emergency Room"),
+            new Room(22948, 14701, "Surgery Room"),
+            new Room(33491, 34365, "X-Ray"),
+            new Room(9652, 37519, "Maternity"),
+            new Room(59932, 55122, "Intensive Care"),
+            new Room(24028, 20615, "Recovery")
+    };
+
+    public void updateView() {
         String displayString = "";
 
 /*        for (Region region : monitoredRegions.keySet()) {
@@ -525,8 +548,34 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             displayString = displayString.substring(0, displayString.lastIndexOf('\n'));
         }
 
-        TextView text_view = (TextView) findViewById(R.id.text_view);
-        text_view.setText(displayString);
+        TextView debug_view = (TextView) findViewById(R.id.debug_view);
+        debug_view.setText(displayString);
+
+
+
+
+        boolean isRoomKnown = false;
+        TextView room_name = (TextView) findViewById(R.id.room_name);
+
+        if (rangedBeacons.size() > 0) {
+            Beacon beacon = rangedBeacons.get(0);
+
+            for (Room room : rooms) {
+                if (beacon.getMajor() == room.major && beacon.getMinor() == room.minor) {
+                    isRoomKnown = true;
+                    room_name.setText(room.name);
+                }
+            }
+
+            if (!isRoomKnown) {
+                isRoomKnown = true;
+                room_name.setText("Unknown Room");
+            }
+        }
+
+        if (!isRoomKnown) {
+            room_name.setText("SickKids Hospital");
+        }
     }
 
 }
