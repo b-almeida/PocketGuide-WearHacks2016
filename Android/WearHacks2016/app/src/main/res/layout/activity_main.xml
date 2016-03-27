@@ -81,13 +81,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_margin="@dimen/arrow_margin"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="@dimen/arrow_margin"
+                    android:layout_marginLeft="@dimen/arrow_margin"
+                    android:layout_marginRight="@dimen/arrow_margin"
                     android:maxHeight="@dimen/arrow_size"
                     android:maxWidth="@dimen/arrow_size"
                     android:minHeight="@dimen/arrow_size"
                     android:minWidth="@dimen/arrow_size"
                     android:src="@drawable/ic_arrow_upward_white_48dp"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/left_arrow"
@@ -100,7 +103,7 @@
                     android:minHeight="@dimen/arrow_size"
                     android:minWidth="@dimen/arrow_size"
                     android:src="@drawable/ic_arrow_left_white_48dp"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/right_arrow"
@@ -114,7 +117,7 @@
                     android:minHeight="@dimen/arrow_size"
                     android:minWidth="@dimen/arrow_size"
                     android:src="@drawable/ic_arrow_right_white_48dp"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
                 <ImageView
                     android:id="@+id/down_arrow"
@@ -123,13 +126,16 @@
                     android:layout_below="@id/up_arrow"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:layout_margin="@dimen/arrow_margin"
+                    android:layout_marginTop="@dimen/arrow_margin"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginLeft="@dimen/arrow_margin"
+                    android:layout_marginRight="@dimen/arrow_margin"
                     android:maxHeight="@dimen/arrow_size"
                     android:maxWidth="@dimen/arrow_size"
                     android:minHeight="@dimen/arrow_size"
                     android:minWidth="@dimen/arrow_size"
                     android:src="@drawable/ic_arrow_downward_white_48dp"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
             </RelativeLayout>
 
