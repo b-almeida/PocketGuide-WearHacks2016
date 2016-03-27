@@ -525,24 +525,33 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             new Room(0, 23105, 37595, "Emergency Room"),
             new Room(1, 22948, 14701, "Surgery Room"),
             new Room(2, 33491, 34365, "X-Ray"),
-            new Room(3, 9652, 37519, "Maternity"),
+            new Room(3, 9652,  37519, "Maternity"),
             new Room(4, 59932, 55122, "Intensive Care"),
-            new Room(5, 24028, 20615, "Recovery")
+            new Room(5, 24028, 20615, "Recovery"),
+            new Room(6, 64904, 53347, "Entertainment")
     };
 
     private void onCreateRooms() {
         rooms[0].nearbyRooms.put(1, Direction.UP);
-        rooms[1].nearbyRooms.put(0,Direction.DOWN);
-        rooms[0].nearbyRooms.put(4,Direction.RIGHT);
-        rooms[4].nearbyRooms.put(0,Direction.LEFT);
-        rooms[1].nearbyRooms.put(5,Direction.RIGHT);
-        rooms[5].nearbyRooms.put(1,Direction.LEFT);
-        rooms[2].nearbyRooms.put(0,Direction.UP);
-        rooms[0].nearbyRooms.put(2,Direction.DOWN);
-        rooms[3].nearbyRooms.put(5,Direction.DOWN);
-        rooms[5].nearbyRooms.put(3,Direction.UP);
-        rooms[4].nearbyRooms.put(5,Direction.UP);
-        rooms[5].nearbyRooms.put(4,Direction.DOWN);
+        rooms[1].nearbyRooms.put(0, Direction.DOWN);
+
+        rooms[0].nearbyRooms.put(4, Direction.RIGHT);
+        rooms[4].nearbyRooms.put(0, Direction.LEFT);
+
+        rooms[1].nearbyRooms.put(5, Direction.RIGHT);
+        rooms[5].nearbyRooms.put(1, Direction.LEFT);
+
+        rooms[2].nearbyRooms.put(0, Direction.UP);
+        rooms[0].nearbyRooms.put(2, Direction.DOWN);
+
+        rooms[3].nearbyRooms.put(5, Direction.DOWN);
+        rooms[5].nearbyRooms.put(3, Direction.UP);
+
+        rooms[4].nearbyRooms.put(5, Direction.UP);
+        rooms[5].nearbyRooms.put(4, Direction.DOWN);
+
+        rooms[6].nearbyRooms.put(2, Direction.UP);
+        rooms[2].nearbyRooms.put(6, Direction.DOWN);
     }
 
     public void updateView() {
@@ -579,15 +588,26 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         TextView debug_view = (TextView) findViewById(R.id.debug_view);
         debug_view.setText(displayString);
 
-        ImageView left_arrow=(ImageView)findViewById(R.id.left_icon);
-        ImageView right_arrow=(ImageView)findViewById(R.id.right_icon);
-        ImageView up_arrow=(ImageView)findViewById(R.id.up_icon);
-        ImageView down_arrow=(ImageView)findViewById(R.id.down_icon);
 
-/*        left_arrow.setVisibility(View.INVISIBLE);
+        ImageView left_arrow    = (ImageView) findViewById(R.id.left_arrow);
+        ImageView right_arrow   = (ImageView) findViewById(R.id.right_arrow);
+        ImageView up_arrow      = (ImageView) findViewById(R.id.up_arrow);
+        ImageView down_arrow    = (ImageView) findViewById(R.id.down_arrow);
+
+        TextView left_text = (TextView) findViewById(R.id.left_text);
+        TextView right_text = (TextView) findViewById(R.id.right_text);
+        TextView up_text = (TextView) findViewById(R.id.up_text);
+        TextView down_text = (TextView) findViewById(R.id.down_text);
+
+        left_arrow.setVisibility(View.INVISIBLE);
         right_arrow.setVisibility(View.INVISIBLE);
         up_arrow.setVisibility(View.INVISIBLE);
-        down_arrow.setVisibility(View.INVISIBLE);*/
+        down_arrow.setVisibility(View.INVISIBLE);
+
+        left_text.setText("");
+        right_text.setText("");
+        up_text.setText("");
+        down_text.setText("");
 
 
         boolean isRoomKnown = false;
@@ -605,18 +625,38 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         switch (room.nearbyRooms.get(roomID)) {
                             case LEFT:
                                 left_arrow.setVisibility(View.VISIBLE);
+                                left_text.setText(rooms[roomID].name);
                                 break;
                             case RIGHT:
                                 right_arrow.setVisibility(View.VISIBLE);
+                                right_text.setText(rooms[roomID].name);
                                 break;
                             case UP:
                                 up_arrow.setVisibility(View.VISIBLE);
+                                up_text.setText(rooms[roomID].name);
+                                //Log.v(TAG, String.format("up_text: %f, %f, %s", up_text.getX(), up_text.getY(), up_text.getText()));
                                 break;
                             case DOWN:
                                 down_arrow.setVisibility(View.VISIBLE);
+                                down_text.setText(rooms[roomID].name);
+                                //Log.v(TAG, String.format("down_text: %f, %f, %s", down_text.getX(), down_text.getY(), down_text.getText()));
                                 break;
                         }
                     }
+
+                    if (left_text.getWidth() > right_text.getWidth()) {
+                        right_text.setWidth(left_text.getWidth());
+                    } else if (right_text.getWidth() > left_text.getWidth()) {
+                        left_text.setWidth(right_text.getWidth());
+                    }
+
+                    if (up_text.getWidth() > down_text.getWidth()) {
+                        down_text.setWidth(up_text.getWidth());
+                    } else if (down_text.getWidth() > up_text.getWidth()) {
+                        up_text.setWidth(down_text.getWidth());
+                    }
+
+                    break;
                 }
             }
 
