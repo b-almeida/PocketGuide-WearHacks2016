@@ -499,10 +499,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private Room[] rooms = {
             new Room(0, 23105, 37595, "Emergency Room"),
             new Room(1, 22948, 14701, "Surgery Room"),
-            new Room(2, 33491, 34365, "X-Ray"),
-            new Room(3, 9652,  37519, "Maternity"),
+            new Room(2, 33491, 34365, "X-Ray Room"),
+            new Room(3, 9652,  37519, "Maternity Ward"),
             new Room(4, 59932, 55122, "Intensive Care"),
-            new Room(5, 24028, 20615, "Recovery"),
+            new Room(5, 24028, 20615, "Recovery Centre"),
             new Room(6, 64904, 53347, "Entertainment")
     };
 
