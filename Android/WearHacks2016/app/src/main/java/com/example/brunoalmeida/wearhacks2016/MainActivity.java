@@ -327,32 +327,36 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mCameraView.activityOnConfigurationChanged();
     }
 
+    /*
+    Sets up the beacon manager and detection.
+     */
     private void onCreateBeacons() {
         beaconManager = new BeaconManager(getApplicationContext());
 
+        /*
+        Use the RangingListener for more precise and frequent detection of specific beacons.
+         */
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 Log.i(TAG, "onBeaconsDiscovered():\n" + region.toString() + "\n" + list.toString());
 
-                //rangedRegions.put(region, list);
                 rangedBeacons = list;
-
                 updateView();
             }
         });
-
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
                 Log.i(TAG, "onServiceReady()");
 
+                /*
+                Search for all beacons with the default UUID.
+                 */
                 beaconManager.startRanging(new Region("General Beacon",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
                         null, null));
-
-                //beaconManager.startNearableDiscovery();
             }
         });
     }
