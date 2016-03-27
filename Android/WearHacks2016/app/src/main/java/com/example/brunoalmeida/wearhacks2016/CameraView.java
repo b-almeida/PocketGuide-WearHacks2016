@@ -12,6 +12,9 @@ import java.io.IOException;
 
 /**
  * A view displaying a live feed from the camera.
+ * 
+ * Partial code for displaying the continuous camera feed taken from:
+ * https://github.com/aron-bordin/Android-Tutorials/tree/master/SimpleCamera
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
