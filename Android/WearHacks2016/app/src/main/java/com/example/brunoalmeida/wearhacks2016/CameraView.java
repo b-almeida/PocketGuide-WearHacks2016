@@ -20,7 +20,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     private Activity mActivity;
 
     private SurfaceHolder mHolder;
-    private Camera mCamera;
+    private Camera mCamera = null;
 
     public CameraView(Activity activity) {
         super(activity);
@@ -38,11 +38,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void setCamera() {
-        try{
+        try {
             Log.v(TAG, "number of cameras: " + Camera.getNumberOfCameras());
             mCamera = Camera.open();//you can use open(int) to use different cameras
-        } catch (Exception e){
-            Log.d("ERROR", "Failed to get camera: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get camera: " + e.getMessage() + ", " + e.toString());
         }
 
 
@@ -91,7 +91,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         if(mHolder.getSurface() == null)//check if the surface is ready to receive camera data
             return;
 
-        try{
+        try {
             mCamera.stopPreview();
         } catch (Exception e){
             //this will happen when you are trying the camera if it's not running
@@ -100,7 +100,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         setCamera();
 
         //now, recreate the camera preview
-        try{
+        try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {

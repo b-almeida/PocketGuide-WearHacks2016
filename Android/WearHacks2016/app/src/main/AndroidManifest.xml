@@ -25,6 +25,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <!-- Required to scan for and connect to Estimote Beacons via Bluetooth. -->
     <uses-permission android:name="android.permission.BLUETOOTH"/>

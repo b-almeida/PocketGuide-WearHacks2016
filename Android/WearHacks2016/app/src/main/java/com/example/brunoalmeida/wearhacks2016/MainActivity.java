@@ -78,12 +78,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             // Note that some of these constants are new as of API 16 (Jelly Bean)
             // and API 19 (KitKat). It is safe to use them, as they are inlined
             // at compile-time and do nothing on earlier devices.
-/*            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+            m_camera_view.setSystemUiVisibility(
+                      View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);*/
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
 /*
@@ -93,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         @Override
         public void run() {
             // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
+/*            ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
-            }
+            }*/
 /*
             mControlsView.setVisibility(View.VISIBLE);
 */
@@ -127,19 +128,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
 
-
-
-
     private Camera mCamera = null;
+    private FrameLayout m_camera_view = null;
     private CameraView mCameraView = null;
 
-
-
-
     private static int PERMISSION_REQUEST_CODE_CAMERA = 1;
-
-
-
 
 
 
@@ -151,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
 
 
+        setContentView(R.layout.activity_main);
+
+        m_camera_view = (FrameLayout) findViewById(R.id.camera_view);
+
+
         //  App ID & App Token can be taken from App section of Estimote Cloud.
         EstimoteSDK.initialize(this, getString(R.string.app_name), getString(R.string.app_name));
         // Optional, debug logging.
@@ -159,11 +157,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         onCreateBeacons();
         onCreateRooms();
 
-        setContentView(R.layout.activity_main);
 
         mVisible = true;
-
-
 
         View decorView = getWindow().getDecorView();
         // Hide both the navigation bar and the status bar.
@@ -174,20 +169,26 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
         decorView.setSystemUiVisibility(uiOptions);
 
+        m_camera_view.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
 
 /*        mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);*/
 
 
         // Set up the user interaction to manually show or hide the system UI.
-/*
-        mContentView.setOnClickListener(new View.OnClickListener() {
+        m_camera_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toggle();
             }
         });
-*/
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -197,9 +198,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 */
 
 
-        /* Check for write permission */
+        /* Check for camera permission */
 
-        // Permission is not already granded
+        // Permission is not already granted
         // Must request permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -208,27 +209,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA},
                     PERMISSION_REQUEST_CODE_CAMERA);
-
-
-/*            // Should we show an explanation?
-            // "True if the app has requested this permission previously
-            // and the user denied the request."
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                // PERMISSION_REQUEST_EXPORT_DATA_TO_CSV is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }*/
-
 
             // Permission is already granted
         } else {
@@ -240,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-
         Log.v(TAG, "In onRequestPermissionsResult()");
 
         if (requestCode == PERMISSION_REQUEST_CODE_CAMERA) {
@@ -248,35 +227,29 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                // permission was granted, yay! Do the
-                // export-related task you need to do.
+                // permission granted
                 cameraPermissionGranted();
 
             } else {
-
-                // permission denied, boo! Disable the
-                // functionality that depends on this permission.
+                // permission denied
             }
         }
-
-        // other 'case' lines to check for other
-        // permissions this app might request
     }
 
     private void cameraPermissionGranted() {
         Log.v(TAG, "Camera permission granted");
 
-        try{
+        try {
             Log.v(TAG, "number of cameras: " + Camera.getNumberOfCameras());
-            mCamera = Camera.open();//you can use open(int) to use different cameras
+            mCamera = Camera.open();    // you can use open(int) to use different cameras
         } catch (Exception e){
             Log.d("ERROR", "Failed to get camera: " + e.getMessage());
         }
 
-        if(mCamera != null) {
-            mCameraView = new CameraView(this);//create a SurfaceView to show camera data
+        if (mCamera != null) {
+            mCameraView = new CameraView(this); // create a SurfaceView to show camera data
             FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
-            camera_view.addView(mCameraView);//add the SurfaceView to the layout
+            camera_view.addView(mCameraView);   // add the SurfaceView to the layout
         }
     }
 
@@ -333,8 +306,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-/*        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+/*        m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);*/
+        //m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        //m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
@@ -634,12 +609,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                             case UP:
                                 up_arrow.setVisibility(View.VISIBLE);
                                 up_text.setText(rooms[roomID].name);
-                                //Log.v(TAG, String.format("up_text: %f, %f, %s", up_text.getX(), up_text.getY(), up_text.getText()));
                                 break;
                             case DOWN:
                                 down_arrow.setVisibility(View.VISIBLE);
                                 down_text.setText(rooms[roomID].name);
-                                //Log.v(TAG, String.format("down_text: %f, %f, %s", down_text.getX(), down_text.getY(), down_text.getText()));
                                 break;
                         }
                     }
