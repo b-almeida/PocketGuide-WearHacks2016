@@ -2,15 +2,9 @@ package com.example.brunoalmeida.wearhacks2016;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
-import android.nfc.Tag;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -21,27 +15,21 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.app.Application;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.EstimoteSDK;
-import com.estimote.sdk.Nearable;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
 import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.connection.BeaconConnection;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.UUID;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
+ * A full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -65,31 +53,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
      * and a change of the status and navigation bar.
      */
     private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-/*
-    private View mContentView;
-*/
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
+    private static int PERMISSION_REQUEST_CODE_CAMERA = 1;
 
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            m_camera_view.setSystemUiVisibility(
-                      View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-/*
-    private View mControlsView;
-*/
+    /*
+        private View mContentView;
+    */
+    private final Handler mHideHandler = new Handler();
+
+    /*
+        private View mControlsView;
+    */
     private final Runnable mShowPart2Runnable = new Runnable() {
         @Override
         public void run() {
@@ -101,13 +74,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 /*
             mControlsView.setVisibility(View.VISIBLE);
 */
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
         }
     };
     /**
@@ -124,18 +90,49 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             return false;
         }
     };
-
-
-
-
+    private boolean mVisible;
+    private final Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
     private Camera mCamera = null;
     private FrameLayout m_camera_view = null;
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            // Delayed removal of status and navigation bar
+
+            // Note that some of these constants are new as of API 16 (Jelly Bean)
+            // and API 19 (KitKat). It is safe to use them, as they are inlined
+            // at compile-time and do nothing on earlier devices.
+            m_camera_view.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LOW_PROFILE
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
     private CameraView mCameraView = null;
-
-    private static int PERMISSION_REQUEST_CODE_CAMERA = 1;
-
-
-
+    private BeaconManager beaconManager;
+    private List<Beacon> rangedBeacons = null;
+    /*
+    Define the hospital rooms here.
+    The Room id should match the Room's zero-based index in the list.
+     */
+    private Room[] rooms = {
+            new Room(0, 23105, 37595, "Emergency Room"),
+            new Room(1, 22948, 14701, "Surgery Room"),
+            new Room(2, 33491, 34365, "X-Ray Room"),
+            new Room(3, 9652, 37519, "Maternity Ward"),
+            new Room(4, 59932, 55122, "Intensive Care"),
+            new Room(5, 24028, 20615, "Recovery Centre"),
+            new Room(6, 64904, 53347, "Entertainment")
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,22 +239,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         try {
             Log.v(TAG, "number of cameras: " + Camera.getNumberOfCameras());
             mCamera = Camera.open();    // you can use open(int) to use different cameras
-        } catch (Exception e){
-            Log.d("ERROR", "Failed to get camera: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to get camera: " + e.getMessage());
         }
 
         if (mCamera != null) {
             mCameraView = new CameraView(this); // create a SurfaceView to show camera data
-            FrameLayout camera_view = (FrameLayout)findViewById(R.id.camera_view);
+            FrameLayout camera_view = (FrameLayout) findViewById(R.id.camera_view);
             camera_view.addView(mCameraView);   // add the SurfaceView to the layout
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        mCameraView.activityOnPause();
     }
 
     @Override
@@ -265,7 +255,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onResume();
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
-
         mCameraView.activityOnResume();
     }
 
@@ -293,9 +282,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         if (actionBar != null) {
             actionBar.hide();
         }
+
 /*
         mControlsView.setVisibility(View.GONE);
 */
+
         mVisible = false;
 
         // Schedule a runnable to remove the status and navigation bar after a delay
@@ -306,10 +297,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-/*        m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);*/
-        //m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-        //m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        /*m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        m_camera_view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);*/
+
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay
@@ -335,45 +327,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mCameraView.activityOnConfigurationChanged();
     }
 
-
-
-
-
-
-
-
-    private BeaconManager beaconManager;
-
-    //private HashMap<Region, List<Beacon>> monitoredRegions = new HashMap<>();
-    //private HashMap<Region, List<Beacon>> rangedRegions = new HashMap<>();
-    private List<Beacon> rangedBeacons = null;
-    //private HashSet<Nearable> nearables = new HashSet<Nearable>();
-
-
     private void onCreateBeacons() {
         beaconManager = new BeaconManager(getApplicationContext());
-
-/*        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-            @Override
-            public void onEnteredRegion(Region region, List<Beacon> list) {
-                Log.i(TAG, "onEnteredRegion()");
-                Log.v(TAG, region.toString());
-                Log.v(TAG, list.toString());
-
-                monitoredRegions.put(region, list);
-
-                updateTextView();
-            }
-
-            @Override
-            public void onExitedRegion(Region region) {
-                Log.i("MyApplication", "onExitedRegion()");
-                // could add an "exit" notification too if you want (-:
-                monitoredRegions.remove(region);
-
-                updateTextView();
-            }
-        });*/
 
         beaconManager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
@@ -387,62 +342,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
-/*        beaconManager.setNearableListener(new BeaconManager.NearableListener() {
-            @Override
-            public void onNearablesDiscovered(List<Nearable> list) {
-                Log.i(TAG, "onNearablesDiscovered()");
-                Log.v(TAG, list.toString());
-
-                for (Nearable nearable : nearables) {
-                    nearables.add(nearable);
-                }
-
-                updateTextView();
-            }
-        });*/
-
 
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                Log.i("MyApplication", "onServiceReady()");
-
-/*                beaconManager.startMonitoring(new Region("beacon 1",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        59932, 55122));
-                beaconManager.startMonitoring(new Region("beacon 2",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        24565, 51630));
-                beaconManager.startMonitoring(new Region("beacon 3",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        29098, 1493));
-                beaconManager.startMonitoring(new Region("beacon 4",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        14421, 31585));
-
-                beaconManager.startMonitoring(new Region("General Beacon",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        null, null));*/
-
-
- /*               beaconManager.startRanging(new Region("beacon 1",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        59932, 55122));
-                beaconManager.startRanging(new Region("beacon 2",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        24565, 51630));
-                beaconManager.startRanging(new Region("beacon 3",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        29098, 1493));
-                beaconManager.startRanging(new Region("beacon 4",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        14421, 31585));*/
-
-                /*
-                onBeaconsDiscovered():
-                Region{identifier=General Beacon, proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=null, minor=null, secure=false}
-                [Beacon{macAddress=[F5:05:92:DB:5A:41], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=23105, minor=37595, measuredPower=-76, rssi=-87}, Beacon{macAddress=[FC:5C:39:6D:59:A4], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=22948, minor=14701, measuredPower=-60, rssi=-80}, Beacon{macAddress=[CD:7C:86:3D:82:D3], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=33491, minor=34365, measuredPower=-60, rssi=-84}, Beacon{macAddress=[DE:72:50:87:5D:DC], proximityUUID=b9407f30-f5f8-466e-aff9-25556b57fe6d, major=24028, minor=20615, measuredPower=-60, rssi=-89}]
-                */
+                Log.i(TAG, "onServiceReady()");
 
                 beaconManager.startRanging(new Region("General Beacon",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
@@ -453,26 +357,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
     }
 
-
-/*    public void showNotification(String title, String message) {
-        Log.i("MyApplication", "showNotification()");
-
-        Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
-                new Intent[] { notifyIntent }, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new Notification.Builder(this)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build();
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
-    }*/
 
     private enum Direction {
         LEFT,
@@ -496,16 +380,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     }
 
-    private Room[] rooms = {
-            new Room(0, 23105, 37595, "Emergency Room"),
-            new Room(1, 22948, 14701, "Surgery Room"),
-            new Room(2, 33491, 34365, "X-Ray Room"),
-            new Room(3, 9652,  37519, "Maternity Ward"),
-            new Room(4, 59932, 55122, "Intensive Care"),
-            new Room(5, 24028, 20615, "Recovery Centre"),
-            new Room(6, 64904, 53347, "Entertainment")
-    };
 
+    /*
+    Define the hospital layout (directions to go between rooms).
+    Each connection is in a single direction, so connections should be made in pairs (opposite connections).
+     */
     private void onCreateRooms() {
         rooms[0].nearbyRooms.put(1, Direction.UP);
         rooms[1].nearbyRooms.put(0, Direction.DOWN);
@@ -530,31 +409,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     public void updateView() {
+        /* Display beacon list for debugging */
+
         String displayString = "";
-
-/*        for (Region region : monitoredRegions.keySet()) {
-            displayString += "Mon: " + region.getIdentifier() + " -";
-
-            for (Beacon beacon : monitoredRegions.get(region)) {
-                //displayString += String.format(" %.2f", Math.pow( 10, (beacon.getRssi() - beacon.getMeasuredPower()) / 10.0 ));
-                displayString += String.format(" %d", beacon.getMeasuredPower());
-
-                Log.v(TAG, beacon.toString());
-            }
-
-            displayString += "\n";
-        }*/
-
 
         displayString += "General Beacons\n";
         for (Beacon beacon : rangedBeacons) {
             displayString += beacon.getMajor() + " " + beacon.getMinor() + "\n";
         }
-
-/*        for (Nearable nearable : nearables) {
-            displayString += "Nea: " + nearable.identifier + " - " + nearable.power + "\n";
-        }*/
-
 
         if (displayString.endsWith("\n")) {
             displayString = displayString.substring(0, displayString.lastIndexOf('\n'));
@@ -564,10 +426,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         debug_view.setText(displayString);
 
 
-        ImageView left_arrow    = (ImageView) findViewById(R.id.left_arrow);
-        ImageView right_arrow   = (ImageView) findViewById(R.id.right_arrow);
-        ImageView up_arrow      = (ImageView) findViewById(R.id.up_arrow);
-        ImageView down_arrow    = (ImageView) findViewById(R.id.down_arrow);
+
+
+        /* Enable arrows and display text for connected rooms */
+        ImageView left_arrow = (ImageView) findViewById(R.id.left_arrow);
+        ImageView right_arrow = (ImageView) findViewById(R.id.right_arrow);
+        ImageView up_arrow = (ImageView) findViewById(R.id.up_arrow);
+        ImageView down_arrow = (ImageView) findViewById(R.id.down_arrow);
 
         TextView left_text = (TextView) findViewById(R.id.left_text);
         TextView right_text = (TextView) findViewById(R.id.right_text);
@@ -585,16 +450,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         down_text.setText("");
 
 
-        boolean isRoomKnown = false;
         TextView room_name = (TextView) findViewById(R.id.room_name);
+        boolean isNameSet = false;
 
+        /*
+        Get the first room in the list of discovered rooms.
+        (The `rangedBeacons` list is sorted by estimated proximity, or distance from the device).
+         */
         if (rangedBeacons.size() > 0) {
             Beacon beacon = rangedBeacons.get(0);
 
             for (Room room : rooms) {
                 if (beacon.getMajor() == room.major && beacon.getMinor() == room.minor) {
-                    isRoomKnown = true;
                     room_name.setText(room.name);
+                    isNameSet = true;
 
                     for (int roomID : room.nearbyRooms.keySet()) {
                         switch (room.nearbyRooms.get(roomID)) {
@@ -633,14 +502,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 }
             }
 
-            if (!isRoomKnown) {
-                isRoomKnown = true;
+            if (!isNameSet) {
                 room_name.setText("Unknown Room");
+                isNameSet = true;
             }
         }
 
-        if (!isRoomKnown) {
+        if (!isNameSet) {
             room_name.setText("SickKids Hospital");
+            isNameSet = true;
         }
     }
 

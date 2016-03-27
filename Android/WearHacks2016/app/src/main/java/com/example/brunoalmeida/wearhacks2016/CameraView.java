@@ -11,7 +11,7 @@ import android.view.SurfaceView;
 import java.io.IOException;
 
 /**
- * Created by Bruno on 2016-03-25.
+ * A view displaying a live feed from the camera.
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -22,16 +22,15 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera = null;
 
+
     public CameraView(Activity activity) {
         super(activity);
 
         mActivity = activity;
 
-
         setCamera();
 
-
-        //get the holder and set this class as the callback, so we can get camera data here
+        // get the holder and set this class as the callback, so we can get camera data here
         mHolder = getHolder();
         mHolder.addCallback(this);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
@@ -40,14 +39,13 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     private void setCamera() {
         try {
             Log.v(TAG, "number of cameras: " + Camera.getNumberOfCameras());
-            mCamera = Camera.open();//you can use open(int) to use different cameras
+            mCamera = Camera.open();    // you can use open(int) to use different cameras
         } catch (Exception e) {
             Log.e(TAG, "Failed to get camera: " + e.getMessage() + ", " + e.toString());
         }
 
 
-        //mCamera.setDisplayOrientation(90);
-
+        // mCamera.setDisplayOrientation(90);
 
         Camera.CameraInfo info =
                 new android.hardware.Camera.CameraInfo();
@@ -56,10 +54,18 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
                 .getRotation();
         int degrees = 0;
         switch (rotation) {
-            case Surface.ROTATION_0: degrees = 0; break;
-            case Surface.ROTATION_90: degrees = 90; break;
-            case Surface.ROTATION_180: degrees = 180; break;
-            case Surface.ROTATION_270: degrees = 270; break;
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
         }
         Log.v(TAG, "setCamera(): degrees = " + degrees);
 
@@ -76,50 +82,46 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         try {
-            //when the surface is created, we can set the camera to draw images in this surfaceholder
+            // when the surface is created, we can set the camera to draw images in this SurfaceHolder
             mCamera.setPreviewDisplay(surfaceHolder);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d("ERROR", "Camera error on surfaceCreated " + e.getMessage());
+            Log.e(TAG, "Camera error on surfaceCreated " + e.getMessage());
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i2, int i3) {
         Log.v(TAG, "surfaceChanged()");
-        //before changing the application orientation, you need to stop the preview, rotate and then start it again
-        if(mHolder.getSurface() == null)//check if the surface is ready to receive camera data
+        // before changing the application orientation, you need to stop the preview, rotate and then start it again
+        if (mHolder.getSurface() == null)    // check if the surface is ready to receive camera data
             return;
 
         try {
             mCamera.stopPreview();
-        } catch (Exception e){
-            //this will happen when you are trying the camera if it's not running
+        } catch (Exception e) {
+            Log.i(TAG, "surfaceChanged(): stopping camera error - " + e);
+            // this will happen when you are trying the camera if it's not running
         }
 
         setCamera();
 
-        //now, recreate the camera preview
+        // now, recreate the camera preview
         try {
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (IOException e) {
-            Log.d("ERROR", "Camera error on surfaceChanged " + e.getMessage());
+            Log.e(TAG, "Camera error on surfaceChanged " + e.getMessage());
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         Log.v(TAG, "In surfaceDestroyed()");
-        //our app has only one screen, so we'll destroy the camera in the surface
-        //if you are unsing with more screens, please move this code your activity
+        // our app has only one screen, so we'll destroy the camera in the surface
+        // if you are using with more screens, move this code to the activity
         mCamera.stopPreview();
         mCamera.release();
-    }
-
-    public void activityOnPause() {
-        Log.v(TAG, "In activityOnPause()");
-        //surfaceDestroyed(mHolder);
     }
 
     public void activityOnResume() {
@@ -131,4 +133,5 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         Log.v(TAG, "activityOnConfigurationChanged()");
         surfaceChanged(mHolder, 0, 0, 0);
     }
+
 }

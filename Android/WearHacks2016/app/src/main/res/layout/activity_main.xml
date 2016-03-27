@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.brunoalmeida.wearhacks2016.MainActivity">
-    <!-- android:background="#0099cc" -->
 
     <FrameLayout
         android:id="@+id/camera_view"
@@ -29,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="Arial"
         android:text="SickKids Hospital"
         android:textColor="@android:color/white"
@@ -81,10 +80,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="0dp"
                     android:layout_marginBottom="@dimen/arrow_margin"
                     android:layout_marginLeft="@dimen/arrow_margin"
                     android:layout_marginRight="@dimen/arrow_margin"
+                    android:layout_marginTop="0dp"
                     android:maxHeight="@dimen/arrow_size"
                     android:maxWidth="@dimen/arrow_size"
                     android:minHeight="@dimen/arrow_size"
@@ -126,10 +125,10 @@
                     android:layout_below="@id/up_arrow"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:layout_marginTop="@dimen/arrow_margin"
                     android:layout_marginBottom="0dp"
                     android:layout_marginLeft="@dimen/arrow_margin"
                     android:layout_marginRight="@dimen/arrow_margin"
+                    android:layout_marginTop="@dimen/arrow_margin"
                     android:maxHeight="@dimen/arrow_size"
                     android:maxWidth="@dimen/arrow_size"
                     android:minHeight="@dimen/arrow_size"
@@ -156,6 +155,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
             android:lines="1"
             android:textColor="@android:color/white"
@@ -186,33 +186,5 @@
             android:textColor="#33b5e5"
             android:textSize="50sp"
             android:textStyle="bold" />-->
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
-    <!--    <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true">
-
-            <LinearLayout
-                android:id="@+id/fullscreen_content_controls"
-                style="?metaButtonBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:background="@color/black_overlay"
-                android:orientation="horizontal"
-                tools:ignore="UselessParent">
-
-                <Button
-                    android:id="@+id/dummy_button"
-                    style="?metaButtonBarButtonStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dummy_button" />
-
-            </LinearLayout>
-        </FrameLayout>-->
 
 </FrameLayout>
