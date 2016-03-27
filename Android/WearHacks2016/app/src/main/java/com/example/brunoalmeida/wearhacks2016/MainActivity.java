@@ -255,7 +255,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onResume();
 
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
-        mCameraView.activityOnResume();
+
+        if (mCameraView != null) {
+            mCameraView.activityOnResume();
+        }
     }
 
     @Override
